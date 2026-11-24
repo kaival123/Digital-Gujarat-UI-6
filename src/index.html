@@ -9,12 +9,12 @@
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* first-paint loader: inline so it shows instantly, before the app bundle arrives (important on slow 4G).
        Progress is driven by main.ts through the --al-p custom property (0–1). */
-    #app-loader { position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; color: #fff; font-family: 'Inter', system-ui, sans-serif;
-      background: radial-gradient(70% 60% at 85% 0%, rgba(232, 137, 29, 0.22), transparent 60%), radial-gradient(60% 60% at 0% 100%, rgba(47, 107, 196, 0.35), transparent 60%), #0d254e;
+    #app-loader { position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; color: #fff; font-family: 'Noto Sans', system-ui, sans-serif;
+      background: #ffffff; color: #18212f;
       transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.7s; will-change: opacity; contain: strict; --al-p: 0.06; }
     #app-loader.al-hide { opacity: 0; visibility: hidden; pointer-events: none; }
     #app-loader .al-box { transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); display: grid; justify-items: center; gap: 22px; padding: 24px; text-align: center; }
@@ -22,11 +22,11 @@
     /* while loading: pause the app's entrance animations/transitions so they play as the loader fades, not behind it */
     html.al-loading app-root *, html.al-loading app-root *::before, html.al-loading app-root *::after { animation-play-state: paused !important; }
     html.al-loading app-root .reveal { transition: none !important; }
-    #app-loader .al-logos { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border-radius: 22px; background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.6); animation: alFloat 3s ease-in-out infinite; }
+    #app-loader .al-logos { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border-radius: 22px; background: #fff; box-shadow: none; animation: alFloat 3s ease-in-out infinite; }
     #app-loader .al-logos img { height: 52px; width: auto; display: block; }
-    #app-loader .al-text { margin: 0; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.03em; color: rgba(255, 255, 255, 0.78); }
-    #app-loader .al-bar { position: relative; width: min(260px, 66vw); height: 5px; border-radius: 5px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
-    #app-loader .al-bar i { position: absolute; inset: 0; border-radius: 5px; background: linear-gradient(90deg, #2f6bc4, #cfe0f7 55%, #e8891d); transform-origin: 0 50%; transform: scaleX(var(--al-p)); transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+    #app-loader .al-text { margin: 0; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.03em; color: #4a5568; }
+    #app-loader .al-bar { position: relative; width: min(260px, 66vw); height: 5px; border-radius: 5px; background: #e9eef5; overflow: hidden; }
+    #app-loader .al-bar i { position: absolute; inset: 0; border-radius: 5px; background: linear-gradient(90deg, #ff9933 0 33%, #0b4ea2 33% 66%, #138808 66%); transform-origin: 0 50%; transform: scaleX(var(--al-p)); transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
     #app-loader .al-bar i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55), transparent 70%); transform: translateX(-100%); animation: alShine 1.4s ease-in-out infinite; }
     #app-loader .al-noscript { margin: 0; padding: 12px 16px; border-radius: 10px; background: #fff; color: #0f1b2d; font-weight: 700; }
     @keyframes alShine { to { transform: translateX(100%); } }

@@ -1,314 +1,392 @@
-    <!-- Hero -->
-  <section class="hero">
-    <span class="hero-mesh" aria-hidden="true"></span>
-    <span class="hero-grid" aria-hidden="true"></span>
-    <div class="container">
-      <p-carousel [value]="slides" [numVisible]="1" [numScroll]="1" [circular]="true" [autoplayInterval]="a11y.motionOff() ? 0 : 7000" [showNavigators]="false" styleClass="hero-carousel">
-        <ng-template #item let-s>
-          <div class="hero-slide">
-            <div class="hero-copy">
-              <span class="eyebrow"><span class="live"></span> Government of Gujarat · Digital Gujarat</span>
-              <h1 [attr.aria-label]="(s.title + ' ' + s.accent + ' ' + s.rest).trim()">
-                @for (w of words(s); track $index) { <span class="hw" [class.acc]="w.acc" [style.--w]="$index" aria-hidden="true"><span>{{ w.t }}</span></span> }
-              </h1>
-              <p class="lead">{{ s.sub }}</p>
-              <div class="hero-cta">
-                <a pButton size="large" href="#services" (click)="scrollTo()">Explore services <i class="pi pi-arrow-right"></i></a>
-                <a pButton size="large" variant="outlined" routerLink="/videos"><i class="pi pi-play-circle"></i> How it works</a>
-              </div>
-              <ul class="hero-facts">
-                @for (f of facts; track f.label; let i = $index) {
-                  <li [style.--i]="i">
-                    <span class="hf-ic"><i [class]="f.icon" aria-hidden="true"></i></span>
-                    <span class="hf-tx">
-                      <strong>@if (f.num !== null) { <span [appCounter]="f.num">0</span>{{ f.suffix }} } @else { {{ f.value }} }</strong>
-                      <small>{{ f.label }}</small>
-                    </span>
-                  </li>
-                }
-              </ul>
-            </div>
-
-            <div class="hero-visual">
-              <div class="hv-orbit" aria-hidden="true"></div>
-              <figure class="hv-frame" [class.round]="s.shape === 'circle'">
-                <img [src]="s.img" [alt]="s.accent + ' – Digital Gujarat'" width="460" height="420">
-              </figure>
-              <div class="glass g1"><span class="gi"><i class="pi pi-check-circle"></i></span><div><b>20+ services</b><small>available online</small></div></div>
-              <div class="glass g2"><span class="gi"><i class="pi pi-clock"></i></span><div><b>Track anytime</b><small>My Applications</small></div></div>
-              <div class="glass g3"><span class="gi"><i class="pi pi-shield"></i></span><div><b>Secure</b><small>Citizen SSO login</small></div></div>
+<!-- ===== Hero slider ===== -->
+<section class="hero" aria-roledescription="carousel" aria-label="Highlights" (mouseenter)="heroHold(true)" (mouseleave)="heroHold(false)" (focusin)="heroHold(true)" (focusout)="heroHold(false)">
+  <div class="container hero-inner">
+    <div class="hero-slides" aria-live="polite">
+      @for (s of slides; track s.title; let i = $index) {
+        <div class="hero-slide" [class.active]="i === slide()" role="group" aria-roledescription="slide" [attr.aria-label]="(i + 1) + ' of ' + slides.length" [attr.aria-hidden]="i !== slide()" [attr.inert]="i !== slide() ? '' : null">
+          <div class="hero-copy">
+            <p class="eyebrow">{{ s.eyebrow }}</p>
+            @if (i === 0) { <h1>{{ s.title }}</h1> } @else { <h2 class="h1">{{ s.title }}</h2> }
+            <p class="lead">{{ s.sub }}</p>
+            <div class="btn-row">
+              <a class="btn btn-lg" [routerLink]="s.cta.route">{{ s.cta.label }} <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+              <a class="btn btn-lg btn-outline" routerLink="/videos"><i class="pi pi-play-circle" aria-hidden="true"></i> How it works</a>
             </div>
           </div>
-        </ng-template>
-      </p-carousel>
-    </div>
-  </section>
-
-  <!-- Floating smart-search card -->
-  <section class="quick" aria-label="Find a service">
-    <div class="container">
-      <div class="quick-card">
-        <button type="button" class="quick-input" (click)="openSearch('')" aria-label="Search services">
-          <i class="pi pi-search"></i>
-          <span>Search 650+ services — income certificate, ration card, scholarship…</span>
-          <kbd>Ctrl&nbsp;K</kbd>
-        </button>
-        <div class="quick-row">
-          <div class="trend-chips">
-            <span class="label"><i class="pi pi-bolt"></i> Trending</span>
-            @for (t of searchSvc.trending.slice(0, 5); track t) {
-              <button type="button" (click)="openSearch(t)">{{ t }}</button>
-            }
-          </div>
-          <div class="quick-links">
-            @for (q of quick; track q.label) {
-              <a [routerLink]="q.route" [attr.aria-label]="q.label"><i [class]="q.icon"></i><span>{{ q.label }}</span></a>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-<!-- Latest update ticker -->
-  <div class="ticker" role="region" aria-label="Latest updates">
-    <div class="container ticker-inner">
-      <a class="ticker-label" routerLink="/latest-update"><i class="pi pi-megaphone"></i> Latest</a>
-      <div class="ticker-track">
-        <div class="ticker-move">
-          @for (n of [0, 1]; track n) {
-            @for (t of ticker; track $index) { <span class="tick"><i class="pi pi-circle-fill"></i>{{ t }}</span> }
-          }
-        </div>
-      </div>
-    </div>
-  </div>
-
-    <!-- Service explorer -->
-  <section id="services" class="section" tabindex="-1" data-main>
-    <div class="container">
-      <div class="explorer-head" appReveal="up">
-        <div>
-          <p-tag value="Browse services" icon="pi pi-th-large" severity="contrast" [rounded]="true" />
-          <h2>Everything you need, <span class="accent">in one place</span></h2>
-          <p>Pick a category, or press <kbd>Ctrl&nbsp;K</kbd> to search all {{ stats[0].value }}+ services.</p>
-        </div>
-        <a pButton variant="outlined" routerLink="/services/citizen">View all services <i class="pi pi-arrow-right"></i></a>
-      </div>
-
-      <div appReveal="up" [revealDelay]="80">
-        <p-tabs value="citizen" scrollable>
-          <p-tablist>
-            @for (c of explorer; track c.key) {
-              <p-tab [value]="c.key"><i [class]="c.icon"></i>&nbsp; {{ c.label }} <span class="count">{{ c.total }}</span></p-tab>
-            }
-          </p-tablist>
-          <p-tabpanels>
-            @for (c of explorer; track c.key) {
-              <p-tabpanel [value]="c.key">
-                <div class="ex-grid">
-                  @for (s of c.items; track s.title) {
-                    <a class="ex-card" [routerLink]="c.route" [queryParams]="{ q: s.title }">
-                      <img decoding="async" loading="lazy" [src]="s.img" alt="">
-                      <span class="ex-title">{{ s.title }}</span>
-                      <i class="pi pi-arrow-up-right"></i>
-                    </a>
-                  }
-                </div>
-                <div class="ex-foot">
-                  <span>{{ c.blurb }}</span>
-                  <a class="more" [routerLink]="c.route">See all {{ c.total }} <i class="pi pi-arrow-right"></i></a>
-                </div>
-              </p-tabpanel>
-            }
-          </p-tabpanels>
-        </p-tabs>
-      </div>
-    </div>
-  </section>
-
-<!-- Stats -->
-  <section class="stats">
-    <div class="container stats-grid">
-      @for (st of stats; track st.label; let i = $index) {
-        <div class="stat" [appReveal]="'zoom'" [revealDelay]="i * 100">
-          <span class="stat-icon"><i [class]="st.icon"></i></span>
-          <strong><span [appCounter]="st.value">0</span>{{ st.suffix }}</strong>
-          <span>{{ st.label }}</span>
+          <figure class="hero-media">
+            <img [src]="s.img" [alt]="s.alt" [style.object-position]="s.pos" width="460" height="420" [attr.loading]="i === 0 ? 'eager' : 'lazy'">
+          </figure>
         </div>
       }
     </div>
-  </section>
-
-  <!-- Trending -->
-  <section class="section alt">
-    <div class="container">
-      <div class="section-head" appReveal="up">
-        <p-tag value="Trending Services" icon="pi pi-chart-line" severity="contrast" [rounded]="true" />
-        <h2>Top <span class="accent">Digital Gujarat</span> Services</h2>
-        <p>The most requested services this month.</p>
-      </div>
-      <div appReveal="up" [revealDelay]="100">
-      <p-carousel [value]="trending" [numVisible]="4" [numScroll]="1" [circular]="false" [responsiveOptions]="[
-          { breakpoint: '1200px', numVisible: 3, numScroll: 1 },
-          { breakpoint: '900px', numVisible: 2, numScroll: 1 },
-          { breakpoint: '560px', numVisible: 1, numScroll: 1 } ]">
-        <ng-template #item let-t>
-          <a class="trend-card" routerLink="/services/citizen" [queryParams]="{ q: t.title }">
-            <span class="rank">{{ t.rank }}</span>
-            <span class="hot"><i class="pi pi-bolt"></i> Hot</span>
-            <span class="tc-icon"><img decoding="async" [src]="t.img" alt=""></span>
-            <h3>{{ t.title }}</h3>
-            <span class="more">Apply now <i class="pi pi-arrow-right"></i></span>
-          </a>
-        </ng-template>
-      </p-carousel>
-      </div>
-    </div>
-  </section>
-
-  <!-- How it works -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head" appReveal="up">
-        <p-tag value="How it works" icon="pi pi-list-check" severity="contrast" [rounded]="true" />
-        <h2>Get a service in <span class="accent">four steps</span></h2>
-      </div>
-      <ol class="steps">
-        @for (st of steps; track st.title; let i = $index) {
-          <li [appReveal]="'up'" [revealDelay]="i * 140">
-            <span class="step-no">{{ i + 1 }}</span>
-            <span class="step-icon"><i [class]="st.icon"></i></span>
-            <h3>{{ st.title }}</h3>
-            <p>{{ st.text }}</p>
-          </li>
+    <div class="hero-controls sl-controls">
+      <button type="button" class="sl-btn" (click)="goSlide(slide() - 1)" aria-label="Previous slide"><i class="pi pi-chevron-left" aria-hidden="true"></i></button>
+      <button type="button" class="sl-btn" (click)="heroPaused.set(!heroPaused())" [attr.aria-label]="heroPaused() ? 'Play slideshow' : 'Pause slideshow'">
+        <i class="pi" [class.pi-pause]="!heroPaused()" [class.pi-play]="heroPaused()" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="sl-btn" (click)="goSlide(slide() + 1)" aria-label="Next slide"><i class="pi pi-chevron-right" aria-hidden="true"></i></button>
+      <div class="sl-dots">
+        @for (s of slides; track s.title; let i = $index) {
+          <button type="button" [attr.aria-current]="i === slide()" [attr.aria-label]="'Go to slide ' + (i + 1)" (click)="goSlide(i)"></button>
         }
-      </ol>
-      <div class="hero-actions center" appReveal="up">
-        <a pButton routerLink="/faq"><i class="pi pi-question-circle"></i> Read the FAQ</a>
-        <a pButton [outlined]="true" routerLink="/videos"><i class="pi pi-video"></i> Watch tutorials</a>
+      </div>
+      <span class="hero-count" aria-hidden="true"><b>{{ slide() + 1 }}</b> / {{ slides.length }}</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Search panel ===== -->
+<section class="finder" aria-labelledby="finder-title">
+  <div class="container">
+    <div class="finder-card">
+      <h2 id="finder-title" class="finder-title"><i class="pi pi-search" aria-hidden="true"></i> Find a service</h2>
+      <button type="button" class="finder-input" (click)="openSearch('')">
+        <span>Search {{ stats[0].value }}+ services — income certificate, ration card, scholarship…</span>
+        <span class="finder-go"><i class="pi pi-search" aria-hidden="true"></i> Search</span>
+      </button>
+      <div class="finder-chips">
+        <span class="fc-label">Popular:</span>
+        @for (t of searchSvc.trending.slice(0, 5); track t) { <button type="button" class="chip" (click)="openSearch(t)">{{ t }}</button> }
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Sugam promo -->
-  <section class="promo">
-    <div class="container promo-inner">
-      <div class="promo-media" appReveal="left">
-        <p-image src="assets/img/standeebuspanel/standeedesign.jpeg" alt="Sugam Digital Gujarat – Line thi Online" [preview]="true" appendTo="body" imageClass="standee" />
+<!-- ===== Latest updates ticker ===== -->
+<div class="ticker" role="region" aria-label="Latest updates" [class.paused]="tickerPaused() || a11y.motionOff()">
+  <div class="container ticker-inner">
+    <a class="ticker-label" routerLink="/latest-update"><i class="pi pi-megaphone" aria-hidden="true"></i> Latest Updates</a>
+    <div class="ticker-track">
+      <ul class="ticker-move">
+        @for (n of [0, 1]; track n) {
+          @for (t of ticker; track $index) { <li [attr.aria-hidden]="n === 1 ? true : null"><span class="badge new" aria-hidden="true">NEW</span> {{ t }}</li> }
+        }
+      </ul>
+    </div>
+    <button type="button" class="ticker-btn" (click)="tickerPaused.set(!tickerPaused())" [attr.aria-label]="tickerPaused() ? 'Play updates ticker' : 'Pause updates ticker'">
+      <i class="pi" [class.pi-pause]="!tickerPaused()" [class.pi-play]="tickerPaused()" aria-hidden="true"></i>
+    </button>
+    <a class="ticker-all" routerLink="/latest-update">View all</a>
+  </div>
+</div>
+
+<!-- ===== Service categories ===== -->
+<section id="services" class="section" tabindex="-1" data-main aria-labelledby="cat-title">
+  <div class="container">
+    <div class="section-head-row">
+      <div class="section-head">
+        <p class="eyebrow"><i class="pi pi-th-large" aria-hidden="true"></i> Services</p>
+        <h2 id="cat-title">Services for every citizen</h2>
+        <p>Choose a category to browse all available online services.</p>
       </div>
-      <div class="promo-copy" appReveal="right">
-        <p-tag value="Sugam Digital Gujarat" severity="warn" [rounded]="true" />
-        <h2>Income certificate? <span class="accent">Now at your fingertips.</span></h2>
-        <p>Skip the trip to the office. Get your certificates online from the comfort of your home.</p>
-        <ul class="perks">
-          @for (p of perks; track p.text; let i = $index) {
-            <li [appReveal]="'right'" [revealDelay]="150 + i * 110"><span class="perk-icon"><i [class]="p.icon"></i></span>{{ p.text }}</li>
+    </div>
+    <ul class="cat-grid">
+      @for (c of categories; track c.title) {
+        <li>
+          @if (c.route) {
+            <a class="cat-card card card-link" [routerLink]="c.route">
+              <span class="cat-ic"><img [src]="c.icon" alt="" width="40" height="40"></span>
+              <span class="cat-tx"><b>{{ c.title }}</b><small>{{ c.text }}</small></span>
+              @if (c.count) { <span class="badge">{{ c.count }} services</span> }
+              <i class="pi pi-arrow-right cat-go" aria-hidden="true"></i>
+            </a>
+          } @else {
+            <a class="cat-card card card-link" [href]="c.url" target="_blank" rel="noopener">
+              <span class="cat-ic"><img [src]="c.icon" alt="" width="40" height="40"></span>
+              <span class="cat-tx"><b>{{ c.title }}</b><small>{{ c.text }}</small></span>
+              <span class="badge accent">External portal</span>
+              <i class="pi pi-external-link cat-go" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<!-- ===== Service explorer ===== -->
+<section class="section alt" aria-labelledby="ex-title">
+  <div class="container">
+    <div class="section-head-row">
+      <div class="section-head">
+        <p class="eyebrow"><i class="pi pi-compass" aria-hidden="true"></i> Browse</p>
+        <h2 id="ex-title">Explore services by department</h2>
+      </div>
+      <a class="btn btn-outline" routerLink="/services/citizen">View all services <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <p-tabs value="citizen" scrollable>
+      <p-tablist>
+        @for (c of explorer; track c.key) {
+          <p-tab [value]="c.key"><i [class]="c.icon" aria-hidden="true"></i> {{ c.label }} <span class="count">{{ c.total }}</span></p-tab>
+        }
+      </p-tablist>
+      <p-tabpanels>
+        @for (c of explorer; track c.key) {
+          <p-tabpanel [value]="c.key">
+            <ul class="ex-grid">
+              @for (s of c.items; track s.title) {
+                <li>
+                  <a class="ex-card" [routerLink]="c.route" [queryParams]="{ q: s.title }">
+                    <span class="ex-ic"><img decoding="async" loading="lazy" [src]="s.img" alt="" width="36" height="36"></span>
+                    <span class="ex-title">{{ s.title }}</span>
+                    <i class="pi pi-angle-right" aria-hidden="true"></i>
+                  </a>
+                </li>
+              }
+            </ul>
+            <div class="ex-foot">
+              <span>{{ c.blurb }}</span>
+              <a class="more" [routerLink]="c.route">See all {{ c.total }} {{ c.label }} services <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+            </div>
+          </p-tabpanel>
+        }
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</section>
+
+<!-- ===== Stats ===== -->
+<section class="stats" aria-label="Digital Gujarat in numbers">
+  <ul class="container stats-grid">
+    @for (st of stats; track st.label) {
+      <li class="stat">
+        <span class="stat-ic"><i [class]="st.icon" aria-hidden="true"></i></span>
+        <span class="stat-tx"><strong><span [appCounter]="st.value">0</span>{{ st.suffix }}</strong><span>{{ st.label }}</span></span>
+      </li>
+    }
+  </ul>
+</section>
+
+<!-- ===== Popular services slider ===== -->
+<section class="section" aria-labelledby="pop-title">
+  <div class="container">
+    <div class="section-head-row">
+      <div class="section-head">
+        <p class="eyebrow"><i class="pi pi-chart-line" aria-hidden="true"></i> Popular</p>
+        <h2 id="pop-title">Most requested services</h2>
+        <p>The services citizens apply for most this month.</p>
+      </div>
+      <div class="sl-controls">
+        <button type="button" class="sl-btn" (click)="scrollTrend(-1)" aria-label="Previous services"><i class="pi pi-chevron-left" aria-hidden="true"></i></button>
+        <button type="button" class="sl-btn" (click)="scrollTrend(1)" aria-label="Next services"><i class="pi pi-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <ul class="pop-track" #trendTrack tabindex="0" aria-label="Most requested services, scroll horizontally">
+      @for (t of trending; track t.title; let i = $index) {
+        <li class="pop-card card">
+          <div class="pop-top">
+            <span class="pop-ic"><img decoding="async" [src]="t.img" alt="" width="52" height="52"></span>
+            <span class="badge" [class.accent]="i === 0">{{ t.tag }}</span>
+          </div>
+          <h3>{{ t.title }}</h3>
+          <p class="muted">Apply online and track the status from My Applications.</p>
+          <a class="btn btn-outline btn-sm" routerLink="/services/citizen" [queryParams]="{ q: t.title }">Apply now <i class="pi pi-arrow-right" aria-hidden="true"></i><span class="sr-only"> for {{ t.title }}</span></a>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<!-- ===== How it works ===== -->
+<section class="section alt" aria-labelledby="steps-title">
+  <div class="container">
+    <div class="section-head center">
+      <p class="eyebrow"><i class="pi pi-list-check" aria-hidden="true"></i> How it works</p>
+      <h2 id="steps-title">Get a service in four simple steps</h2>
+    </div>
+    <ol class="steps">
+      @for (st of steps; track st.title; let i = $index) {
+        <li class="step">
+          <span class="step-no" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="icon-tile lg"><i [class]="st.icon" aria-hidden="true"></i></span>
+          <h3><span class="sr-only">Step {{ i + 1 }}: </span>{{ st.title }}</h3>
+          <p>{{ st.text }}</p>
+        </li>
+      }
+    </ol>
+    <div class="btn-row center">
+      <a class="btn" routerLink="/citizen-login"><i class="pi pi-user-plus" aria-hidden="true"></i> Register now</a>
+      <a class="btn btn-outline" routerLink="/videos"><i class="pi pi-video" aria-hidden="true"></i> Watch tutorials</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== What's new: news + circulars ===== -->
+<section class="section" aria-labelledby="new-title">
+  <div class="container">
+    <div class="section-head-row">
+      <div class="section-head">
+        <p class="eyebrow"><i class="pi pi-megaphone" aria-hidden="true"></i> What's new</p>
+        <h2 id="new-title">News &amp; circulars</h2>
+      </div>
+      <a class="btn btn-outline" routerLink="/latest-update">All updates <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="news-grid">
+      <div class="card news-panel">
+        <h3 class="panel-title"><i class="pi pi-bell" aria-hidden="true"></i> Latest news</h3>
+        <ul class="news-list">
+          @for (n of news; track $index) {
+            @let d = dateParts(n.date);
+            <li>
+              <span class="date-chip" aria-hidden="true"><b>{{ d.d }}</b><small>{{ d.m }} {{ d.y }}</small></span>
+              <p><span class="sr-only">{{ n.date }}: </span>{{ n.text }}</p>
+            </li>
           }
         </ul>
-        <div class="hero-actions">
-          <a pButton routerLink="/sugam-digital-gujarat">Visit Sugam Digital Gujarat <i class="pi pi-arrow-right"></i></a>
-          <a pButton [outlined]="true" class="on-dark" routerLink="/user-manual"><i class="pi pi-book"></i> User manual</a>
-        </div>
       </div>
-    </div>
-  </section>
-
-    <!-- FAQ preview -->
-  <section class="section alt">
-    <div class="container faq-split">
-      <div appReveal="left">
-        <p-tag value="FAQ" icon="pi pi-question-circle" severity="contrast" [rounded]="true" />
-        <h2>Questions? <span class="accent">We have answers.</span></h2>
-        <p class="muted">The essentials about registering, applying and tracking your application.</p>
-        <div class="hero-actions">
-          <a pButton routerLink="/faq">All questions <i class="pi pi-arrow-right"></i></a>
-          <a pButton variant="outlined" routerLink="/help-desk"><i class="pi pi-headphones"></i> Talk to helpdesk</a>
-        </div>
-      </div>
-      <p-accordion [value]="0" appReveal="right">
-        @for (f of faqs; track $index) {
-          <p-accordion-panel [value]="$index">
-            <p-accordion-header>{{ f.q }}</p-accordion-header>
-            <p-accordion-content><p>{{ f.a[0] }}</p></p-accordion-content>
-          </p-accordion-panel>
-        }
-      </p-accordion>
-    </div>
-  </section>
-
-<!-- Glimpses -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head" appReveal="up">
-        <p-tag value="Glimpses" icon="pi pi-camera" severity="contrast" [rounded]="true" />
-        <h2>Glimpses of <span class="accent">Gujarat</span></h2>
-      </div>
-      <div appReveal="zoom">
-        <app-glimpse-slider [items]="glimpses" [paused]="!!viewer()" [autoplay]="!a11y.motionOff()" (view)="openViewer($event)" />
-      </div>
-    </div>
-  </section>
-
-  <!-- Partners -->
-  <section class="section alt">
-    <div class="container">
-      <div class="section-head" appReveal="up">
-        <h2>Important <span class="accent">Links</span></h2>
-      </div>
-      <div class="partners-marquee">
-        <div class="partners-track">
-          @for (copy of [0, 1]; track copy) {
-            @for (p of partners; track $index) {
-              <a [href]="p.url" target="_blank" rel="noopener" [attr.aria-label]="p.name" [attr.aria-hidden]="copy === 1 ? true : null" [attr.tabindex]="copy === 1 ? -1 : null" [pTooltip]="p.name" tooltipPosition="top">
-                <img decoding="async" [src]="p.img" [alt]="copy === 1 ? '' : p.name" loading="lazy">
-              </a>
-            }
+      <div class="card news-panel">
+        <h3 class="panel-title"><i class="pi pi-file" aria-hidden="true"></i> Circulars / GRs</h3>
+        <ul class="circ-list">
+          @for (c of circulars; track c.no) {
+            <li>
+              <span class="circ-ic" aria-hidden="true"><i class="pi pi-file-pdf"></i></span>
+              <div class="circ-tx">
+                <a [href]="c.link" target="_blank" rel="noopener" lang="gu">{{ c.title }}<span class="sr-only"> (PDF, opens in a new tab)</span></a>
+                <small>{{ c.date }} · GR No. {{ c.grNo }}</small>
+              </div>
+            </li>
           }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Sugam promo ===== -->
+<section class="promo" aria-labelledby="promo-title">
+  <div class="container promo-inner">
+    <div class="promo-media">
+      <img src="assets/img/standeebuspanel/standeedesign.jpeg" alt="Sugam Digital Gujarat standee: Line thi Online" loading="lazy">
+    </div>
+    <div class="promo-copy">
+      <p class="eyebrow on-dark">Sugam Digital Gujarat</p>
+      <h2 id="promo-title">Income certificate? Now at your fingertips.</h2>
+      <p>Skip the trip to the office. Get your certificates online from the comfort of your home.</p>
+      <ul class="perks">
+        @for (p of perks; track p.text) { <li><i [class]="p.icon" aria-hidden="true"></i>{{ p.text }}</li> }
+      </ul>
+      <div class="btn-row">
+        <a class="btn btn-light" routerLink="/sugam-digital-gujarat">Visit Sugam Digital Gujarat <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+        <a class="btn btn-on-dark" routerLink="/user-manual"><i class="pi pi-book" aria-hidden="true"></i> User manual</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ + helpdesk ===== -->
+<section class="section alt" aria-labelledby="faq-title">
+  <div class="container faq-split">
+    <div class="faq-side">
+      <div class="section-head">
+        <p class="eyebrow"><i class="pi pi-question-circle" aria-hidden="true"></i> FAQ</p>
+        <h2 id="faq-title">Frequently asked questions</h2>
+        <p>The essentials about registering, applying and tracking your application.</p>
+      </div>
+      <div class="card help-card">
+        <span class="icon-tile green"><i class="pi pi-headphones" aria-hidden="true"></i></span>
+        <div>
+          <h3>Need help?</h3>
+          <p>Helpdesk open 10:00 AM – 6:00 PM, all days.</p>
+          <p class="help-lines"><a [href]="'tel:' + helpline.tel"><i class="pi pi-phone" aria-hidden="true"></i> {{ helpline.label }}</a><a [href]="'mailto:' + email"><i class="pi pi-envelope" aria-hidden="true"></i> {{ email }}</a></p>
         </div>
       </div>
+      <div class="btn-row">
+        <a class="btn" routerLink="/faq">All questions <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+        <a class="btn btn-outline" routerLink="/help-desk">Contact helpdesk</a>
+      </div>
     </div>
-  </section>
+    <p-accordion [value]="0">
+      @for (f of faqs; track $index) {
+        <p-accordion-panel [value]="$index">
+          <p-accordion-header>{{ f.q }}</p-accordion-header>
+          <p-accordion-content><p>{{ f.a[0] }}</p></p-accordion-content>
+        </p-accordion-panel>
+      }
+    </p-accordion>
+  </div>
+</section>
 
-  <!-- Holidays -->
-  <section class="section">
-    <div class="container holiday">
-      <div class="holiday-copy" appReveal="left">
-        <p-tag value="Calendar" icon="pi pi-calendar" severity="contrast" [rounded]="true" />
-        <h2>Government <span class="accent">Holidays</span></h2>
-        <p>Holidays are as per the orders issued by the State Government.</p>
-        <div class="legend">
-          <span><i class="dot public"></i> Public Holiday</span>
-          <span><i class="dot weekly"></i> Weekly Off</span>
+<!-- ===== Glimpses slider + holidays ===== -->
+<section class="section" aria-labelledby="gl-title">
+  <div class="container gl-split">
+    <div class="glimpses" aria-roledescription="carousel" aria-labelledby="gl-title">
+      <div class="section-head-row">
+        <div class="section-head">
+          <p class="eyebrow"><i class="pi pi-camera" aria-hidden="true"></i> Gallery</p>
+          <h2 id="gl-title">Glimpses of Gujarat</h2>
         </div>
-        <a pButton [href]="site + 'Download/GovernmentHolidays.pdf'" target="_blank" rel="noopener"><i class="pi pi-download"></i> Holiday list (PDF)</a>
+        <div class="sl-controls">
+          <button type="button" class="sl-btn" (click)="goGlimpse(gIndex() - 1)" aria-label="Previous photo"><i class="pi pi-chevron-left" aria-hidden="true"></i></button>
+          <button type="button" class="sl-btn" (click)="goGlimpse(gIndex() + 1)" aria-label="Next photo"><i class="pi pi-chevron-right" aria-hidden="true"></i></button>
+        </div>
       </div>
-      <div appReveal="right"><p-datepicker [(ngModel)]="calendarDate" [inline]="true" [showWeek]="false" styleClass="holiday-cal" /></div>
+      <div class="gl-stage">
+        @for (g of glimpses; track g.title; let i = $index) {
+          <figure class="gl-slide" [class.active]="i === gIndex()" [attr.aria-hidden]="i !== gIndex()" role="group" aria-roledescription="slide" [attr.aria-label]="(i + 1) + ' of ' + glimpses.length">
+            <img class="gl-bg" [src]="g.img" alt="" aria-hidden="true">
+            <img class="gl-photo" [src]="g.img" [alt]="g.title" loading="lazy">
+            <figcaption>
+              <span>{{ g.title }}</span>
+              <button type="button" class="btn btn-sm btn-light" [tabIndex]="i === gIndex() ? 0 : -1" (click)="openViewer(g)"><i class="pi pi-expand" aria-hidden="true"></i> View<span class="sr-only"> {{ g.title }} full size</span></button>
+            </figcaption>
+          </figure>
+        }
+      </div>
+      <div class="gl-thumbs">
+        @for (g of glimpses; track g.title; let i = $index) {
+          <button type="button" [attr.aria-current]="i === gIndex()" [attr.aria-label]="'Show ' + g.title" (click)="goGlimpse(i)"><img [src]="g.img" alt="" loading="lazy"></button>
+        }
+      </div>
     </div>
-  </section>
 
-  <!-- Closing call to action -->
-  <section class="cta-band">
-    <div class="container cta-inner" appReveal="zoom">
-      <div>
-        <h2>Ready to skip the queue?</h2>
-        <p>Register once and apply for certificates, schemes and scholarships from home.</p>
+    <div class="holiday card" aria-labelledby="hol-title">
+      <h2 id="hol-title" class="panel-title"><i class="pi pi-calendar" aria-hidden="true"></i> Government holidays</h2>
+      <p class="muted">Holidays are as per the orders issued by the State Government.</p>
+      <p-datepicker [(ngModel)]="calendarDate" [inline]="true" [showWeek]="false" styleClass="holiday-cal" />
+      <div class="legend">
+        <span><i class="dot public" aria-hidden="true"></i> Public holiday</span>
+        <span><i class="dot weekly" aria-hidden="true"></i> Weekly off</span>
       </div>
-      <div class="cta-actions">
-        <a pButton size="large" routerLink="/citizen-login"><i class="pi pi-user-plus"></i> Register / Login</a>
-        <button pButton size="large" type="button" class="on-dark" variant="outlined" (click)="openSearch('')"><i class="pi pi-search"></i> Find a service</button>
-      </div>
+      <a class="btn btn-outline btn-block" [href]="site + 'Download/GovernmentHolidays.pdf'" target="_blank" rel="noopener"><i class="pi pi-download" aria-hidden="true"></i> Holiday list (PDF)<span class="sr-only"> (opens in a new tab)</span></a>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- ===== Important links (logo carousel) ===== -->
+<section class="section tight alt links-band" aria-labelledby="links-title">
+  <div class="container">
+    <div class="section-head-row">
+      <div class="section-head">
+        <h2 id="links-title">Important links</h2>
+      </div>
+      <button type="button" class="sl-btn" (click)="partnersPaused.set(!partnersPaused())" [attr.aria-label]="partnersPaused() ? 'Play logo carousel' : 'Pause logo carousel'">
+        <i class="pi" [class.pi-pause]="!partnersPaused()" [class.pi-play]="partnersPaused()" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="logo-marquee" [class.paused]="partnersPaused() || a11y.motionOff()">
+      <ul class="logo-track">
+        @for (copy of [0, 1]; track copy) {
+          @for (p of partners; track $index) {
+            <li [attr.aria-hidden]="copy === 1 ? true : null">
+              <a [href]="p.url" target="_blank" rel="noopener" [attr.tabindex]="copy === 1 ? -1 : null" [attr.title]="p.name">
+                <img decoding="async" [src]="p.img" [alt]="copy === 1 ? '' : p.name + ' (opens in a new tab)'" loading="lazy">
+              </a>
+            </li>
+          }
+        }
+      </ul>
+    </div>
+  </div>
+</section>
 
 @if (viewer(); as v) {
   <div class="lightbox" (click)="closeViewer()" (document:keydown.escape)="closeViewer()" role="dialog" aria-modal="true" [attr.aria-label]="v.title">
+    <p class="lightbox-cap">{{ v.title }}</p>
     <div class="lightbox-tools" (click)="$event.stopPropagation()">
-      <button type="button" aria-label="Rotate right" (click)="rotateBy(90)"><i class="pi pi-refresh"></i></button>
-      <button type="button" aria-label="Rotate left" (click)="rotateBy(-90)"><i class="pi pi-undo"></i></button>
-      <button type="button" aria-label="Zoom out" (click)="zoomBy(-0.25)"><i class="pi pi-search-minus"></i></button>
-      <button type="button" aria-label="Zoom in" (click)="zoomBy(0.25)"><i class="pi pi-search-plus"></i></button>
-      <button type="button" aria-label="Close" (click)="closeViewer()"><i class="pi pi-times"></i></button>
+      <button type="button" aria-label="Rotate right" (click)="rotateBy(90)"><i class="pi pi-refresh" aria-hidden="true"></i></button>
+      <button type="button" aria-label="Zoom out" (click)="zoomBy(-0.25)"><i class="pi pi-search-minus" aria-hidden="true"></i></button>
+      <button type="button" aria-label="Zoom in" (click)="zoomBy(0.25)"><i class="pi pi-search-plus" aria-hidden="true"></i></button>
+      <button type="button" aria-label="Close" (click)="closeViewer()"><i class="pi pi-times" aria-hidden="true"></i></button>
     </div>
     <img [src]="v.img" [alt]="v.title" [style.transform]="'rotate(' + rot() + 'deg) scale(' + zoom() + ')'" (click)="$event.stopPropagation()" />
   </div>

@@ -12,6 +12,12 @@ function openExternal(items: MenuItem[]): MenuItem[] {
 
 export interface SiteLink { label: string; route?: string; url?: string; }
 
+/** GIGW: every page shows when its content was last reviewed, and who owns / hosts it. */
+export const LAST_UPDATED = '24 November 2026';
+export const HELPLINE = { label: '1800 233 5500', tel: '18002335500' };
+export const SUPPORT_EMAIL = 'dss-support@gujarat.gov.in';
+export const OWNER = 'Department of Science & Technology, Government of Gujarat';
+
 export const NAV: MenuItem[] = openExternal([
   { label: 'Home', icon: 'pi pi-home', routerLink: '/', routerLinkActiveOptions: { exact: true } },
   { label: 'About Us', routerLink: '/about-us' },
@@ -29,6 +35,7 @@ export const NAV: MenuItem[] = openExternal([
   { label: 'Policy', url: 'https://gujaratindia.gov.in/PolicyDetails' },
   { label: 'Business', url: 'https://gujaratindia.gov.in/Home/GujaratTheInvestmentDestination' },
   { label: 'Latest Update', routerLink: '/latest-update' },
+  { label: 'Help Desk', routerLink: '/help-desk' },
 ]);
 
 export const LOGIN_MENU: MenuItem[] = openExternal([
@@ -49,16 +56,26 @@ export const QUICK_LINKS: SiteLink[] = [
 ];
 
 export const IMPORTANT_LINKS: SiteLink[] = [
+  { label: 'Videos', route: '/videos' },
+  { label: 'Sugam User Manual', route: '/user-manual' },
+  { label: 'Feedback Response', route: '/feedback-dashboard' },
+  { label: 'Promotional Campaign', route: '/promotional-campaign' },
+  { label: 'Help Desk', route: '/help-desk' },
+  { label: 'Screen Reader Access', route: '/screen-reader-access' },
+];
+
+/** GIGW mandatory footer links (policies, help, contact, sitemap, feedback). */
+export const POLICY_LINKS: SiteLink[] = [
   { label: 'Terms & Conditions', route: '/terms-conditions' },
   { label: 'Privacy Policy', route: '/privacy-policy' },
   { label: 'Copyright Policy', route: '/copyright-policy' },
-  { label: 'Disclaimer', route: '/disclaimer' },
-  { label: 'Help', route: '/help-desk' },
   { label: 'Hyperlinking Policy', route: '/hyperlinking-policy' },
+  { label: 'Disclaimer', route: '/disclaimer' },
   { label: 'Accessibility Statement', route: '/accessibility-statement' },
-  { label: 'Videos', route: '/videos' },
-  { label: 'Feedback Response', route: '/feedback-dashboard' },
-  { label: 'Promotional Campaign', route: '/promotional-campaign' },
+  { label: 'Help', route: '/help-desk' },
+  { label: 'Contact Us', route: '/help-desk' },
+  { label: 'Feedback', route: '/feedback' },
+  { label: 'Site Map', route: '/sitemap' },
 ];
 
 export const SOCIAL = [

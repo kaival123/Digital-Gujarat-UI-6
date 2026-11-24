@@ -1,6 +1,5 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ButtonDirective } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { Reveal } from '../shared/motion';
 import { PageHero } from '../shared/page-hero';
@@ -10,30 +9,45 @@ import videos from '../data/videos.json';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-videos',
-  imports: [ButtonDirective, Dialog, PageHero, Reveal],
+  imports: [Dialog, PageHero, Reveal],
   template: `
     <app-page-hero title="Videos" subtitle="Step-by-step video tutorials for Digital Gujarat services." />
     <section class="section" data-main tabindex="-1">
       <div class="container">
-        <div class="video-grid">
+        <div class="section-head-row">
+          <div class="section-head">
+            <p class="eyebrow"><i class="pi pi-video" aria-hidden="true"></i> Video tutorials</p>
+            <h2>Learn how to apply online</h2>
+            <p>{{ items.length }} short guides. Select a video to play it here.</p>
+          </div>
+          <a class="btn btn-outline" [href]="yt" target="_blank" rel="noopener">
+            <i class="pi pi-youtube" aria-hidden="true"></i> More on YouTube
+            <i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        </div>
+
+        <ul class="vd-grid">
           @for (v of items; track v.id; let i = $index) {
-            <button type="button" class="video-card" [appReveal]="'up'" [revealDelay]="(i % 4) * 70" (click)="open(v)" [attr.aria-label]="'Play ' + v.title">
-              <span class="thumb">
-                <img [src]="v.thumb" alt="" loading="lazy" (error)="thumbFallback($event, v.id)">
-                <span class="play"><i class="pi pi-play"></i></span>
-              </span>
-              <h3>{{ v.title }}</h3>
-            </button>
+            <li [class.vd-featured]="i === 0" appReveal="up">
+              <button type="button" class="vd-card" (click)="open(v)">
+                <span class="vd-thumb">
+                  <img [src]="v.thumb" alt="" loading="lazy" (error)="thumbFallback($event, v.id)">
+                  <span class="vd-play" aria-hidden="true"><i class="pi pi-play"></i></span>
+                  @if (i === 0) { <span class="badge accent vd-tag">Featured</span> }
+                </span>
+                <span class="vd-body">
+                  <span class="vd-title">{{ v.title }}</span>
+                  <span class="vd-meta"><i class="pi pi-youtube" aria-hidden="true"></i> Watch tutorial<span class="sr-only">: play video in a dialog</span></span>
+                </span>
+              </button>
+            </li>
           }
-        </div>
-        <div class="hero-actions">
-          <a pButton [outlined]="true" [href]="yt" target="_blank" rel="noopener"><i class="pi pi-youtube"></i> More on YouTube</a>
-        </div>
+        </ul>
       </div>
     </section>
     <p-dialog [header]="current()?.title ?? ''" [visible]="visible()" (visibleChange)="visible.set($event)" [modal]="true" [dismissableMask]="true" [style]="{ width: 'min(900px, 94vw)' }" (onHide)="stop()">
       @if (visible() && src(); as s) {
-        <div class="video-frame"><iframe [src]="s" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="vd-frame"><iframe [src]="s" [title]="current()?.title ?? 'Video'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
       }
     </p-dialog>
   `,

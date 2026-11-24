@@ -24,6 +24,7 @@ export const routes: Routes = [
   { path: 'help-desk', loadComponent: () => import('./pages/help-desk').then((m) => m.HelpDeskPage), title: 'Helpdesk Support | Digital Gujarat' },
   { path: 'videos', loadComponent: () => import('./pages/videos').then((m) => m.VideosPage), title: 'Videos | Digital Gujarat' },
   { path: 'promotional-campaign', loadComponent: () => import('./pages/campaign').then((m) => m.CampaignPage), title: 'Promotional Campaign | Digital Gujarat' },
+  { path: 'screen-reader-access', loadComponent: () => import('./pages/screen-reader').then((m) => m.ScreenReaderPage), title: 'Screen Reader Access | Digital Gujarat' },
   { path: 'user-manual', loadComponent: () => import('./pages/user-manual').then((m) => m.UserManualPage), title: 'Sugam User Manual | Digital Gujarat' },
   policy({ path: 'terms-conditions', key: 'terms' }, 'Terms & Conditions'),
   policy({ path: 'privacy-policy', key: 'privacy' }, 'Privacy Policy'),

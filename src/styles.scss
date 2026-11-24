@@ -1,17 +1,11 @@
-/* Single entry point: every partial is pulled in here, in cascade order.
-   Add new stylesheets below — angular.json never needs to change (and no dev-server restart). */
+/* Single entry point: every partial is pulled in here, in cascade order. */
 @use 'tokens';
 @use 'base';
+@use 'components';
+@use 'home';
 @use 'pages';
-@use 'anim';
-@use 'dropdown';
-@use 'perf';
-@use 'hero';
-@use 'home-sections';
-@use 'responsive';
-@use 'a11y';
-@use 'a11y-drawer';
-@use 'coverflow';
-@use 'glimpses';
+@use 'media';
 @use 'help-desk';
 @use 'login';
+@use 'a11y';
+@use 'a11y-drawer';

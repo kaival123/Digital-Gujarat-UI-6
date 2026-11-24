@@ -2,35 +2,58 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonDirective } from 'primeng/button';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { TableModule } from 'primeng/table';
-import { Tag } from 'primeng/tag';
-import { Reveal } from '../shared/motion';
 import { PageHero } from '../shared/page-hero';
 import { abs } from '../shared/site';
 import circulars from '../data/circulars.json';
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const LONG_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/** "17/08/2026" → parts for the calendar chip plus an ISO value for <time>. */
+function parseDate(d: string) {
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(d);
+  if (!m) return null;
+  const mi = +m[2] - 1;
+  return { day: m[1].padStart(2, '0'), mon: MONTHS[mi], year: m[3], iso: `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`, long: `${+m[1]} ${LONG_MONTHS[mi]} ${m[3]}` };
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-latest-update',
-  imports: [ButtonDirective, Tabs, TabList, Tab, TabPanels, TabPanel, TableModule, Tag, PageHero, Reveal],
+  imports: [ButtonDirective, Tabs, TabList, Tab, TabPanels, TabPanel, TableModule, PageHero],
   template: `
     <app-page-hero title="Latest Update" subtitle="News, circulars and notifications from Digital Gujarat." />
-    <section class="section" data-main tabindex="-1">
+    <section class="section lu-page" data-main tabindex="-1">
       <div class="container">
-        <p-tabs value="news" appReveal="up">
+        <p-tabs value="news">
           <p-tablist>
-            <p-tab value="news"><i class="pi pi-megaphone"></i>&nbsp; News &amp; Updates</p-tab>
-            <p-tab value="circular"><i class="pi pi-file"></i>&nbsp; Circular / Notification</p-tab>
+            <p-tab value="news"><i class="pi pi-megaphone" aria-hidden="true"></i> News &amp; Updates <span class="count">{{ news.length }}</span></p-tab>
+            <p-tab value="circular"><i class="pi pi-file" aria-hidden="true"></i> Circular / Notification <span class="count">{{ rows.length }}</span></p-tab>
           </p-tablist>
           <p-tabpanels>
             <p-tabpanel value="news">
-              <ul class="news">
+              <h2 class="sr-only">News and updates</h2>
+              <ul class="lu-news" role="list">
                 @for (n of news; track $index) {
-                  <li>
-                    @if (n.date) { <p-tag [value]="n.date" severity="warn" [rounded]="true" /> }
-                    <div>
+                  <li class="lu-item">
+                    @if (n.d; as d) {
+                      <time class="lu-date" [attr.datetime]="d.iso">
+                        <span class="sr-only">{{ d.long }}</span>
+                        <span class="lu-mon" aria-hidden="true">{{ d.mon }}</span>
+                        <span class="lu-day" aria-hidden="true">{{ d.day }}</span>
+                        <span class="lu-year" aria-hidden="true">{{ d.year }}</span>
+                      </time>
+                    } @else {
+                      <span class="lu-date lu-tip" aria-hidden="true"><i class="pi pi-info-circle"></i><span class="lu-year">Tip</span></span>
+                    }
+                    <div class="lu-body">
                       <p>{{ n.text }}</p>
-                      @for (l of n.links; track l.url) {
-                        <a class="more" [href]="l.url" target="_blank" rel="noopener">{{ l.label }} <i class="pi pi-external-link"></i></a>
+                      @if (n.links.length) {
+                        <div class="lu-links">
+                          @for (l of n.links; track l.url) {
+                            <a class="more" [href]="l.url" target="_blank" rel="noopener">{{ l.label }}<i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
+                          }
+                        </div>
                       }
                     </div>
                   </li>
@@ -38,23 +61,38 @@ import circulars from '../data/circulars.json';
               </ul>
             </p-tabpanel>
             <p-tabpanel value="circular">
-              <p-table [value]="rows" [stripedRows]="true" [paginator]="true" [rows]="10" [scrollable]="true">
+              <h2 class="sr-only">Circulars and notifications</h2>
+              <p-table [value]="rows" [stripedRows]="true" [paginator]="true" [rows]="10" [scrollable]="true" [tableStyle]="{ 'min-width': '46rem' }">
                 <ng-template #header>
-                  <tr><th style="width:4rem">No</th><th style="width:8rem">GR Date</th><th>GR Number</th><th>Title</th><th style="width:7rem">Document</th></tr>
+                  <tr><th scope="col" style="width:4rem">No.</th><th scope="col" style="width:8rem">GR date</th><th scope="col" style="width:16rem">GR number</th><th scope="col">Title</th><th scope="col" style="width:9rem">Document</th></tr>
                 </ng-template>
                 <ng-template #body let-r>
                   <tr>
-                    <td>{{ r.no }}</td><td>{{ r.date }}</td><td>{{ r.grNo }}</td><td>{{ r.title }}</td>
-                    <td><a pButton size="small" [outlined]="true" [href]="r.link" target="_blank" rel="noopener"><i class="pi pi-download"></i></a></td>
+                    <td class="muted">{{ r.no }}</td>
+                    <td class="lu-nowrap">{{ r.date }}</td>
+                    <td class="lu-grno">{{ r.grNo }}</td>
+                    <td class="strong">{{ r.title }}</td>
+                    <td>
+                      <a pButton size="small" [outlined]="true" [href]="r.link" target="_blank" rel="noopener" [attr.aria-label]="'Download PDF: ' + r.title + ' (opens in a new tab)'">
+                        <i class="pi pi-file-pdf" aria-hidden="true"></i> PDF
+                      </a>
+                    </td>
                   </tr>
                 </ng-template>
               </p-table>
             </p-tabpanel>
           </p-tabpanels>
         </p-tabs>
-        <div class="hero-actions">
-          <a pButton [outlined]="true" href="https://mariyojana.gujarat.gov.in/" target="_blank" rel="noopener">Government Scheme / Service <i class="pi pi-external-link"></i></a>
-          <a pButton [outlined]="true" href="https://gil.gujarat.gov.in/Tenders" target="_blank" rel="noopener">Government Tenders <i class="pi pi-external-link"></i></a>
+
+        <div class="card lu-more">
+          <div>
+            <h2 class="lu-more-title">Looking for schemes or tenders?</h2>
+            <p class="muted">Official portals of the Government of Gujarat.</p>
+          </div>
+          <div class="btn-row">
+            <a pButton [outlined]="true" href="https://mariyojana.gujarat.gov.in/" target="_blank" rel="noopener">Government Scheme / Service <i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
+            <a pButton [outlined]="true" href="https://gil.gujarat.gov.in/Tenders" target="_blank" rel="noopener">Government Tenders <i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
         </div>
       </div>
     </section>
@@ -76,5 +114,5 @@ export class LatestUpdatePage {
       ],
     },
     { date: '', text: "Use NIC's SANDES messaging mobile app to get Alert/OTP SMSes related to your Digital Gujarat login instantly.", links: [{ label: 'Android Play Store', url: 'https://play.google.com/store/apps/details?id=in.nic.gimkerala&hl=en_IN&gl=US' }] },
-  ];
+  ].map((n) => ({ ...n, d: parseDate(n.date) }));
 }

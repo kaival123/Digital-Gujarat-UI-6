@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, computed, signal, viewChild } from '@angular/core';
-import { Reveal } from '../shared/motion';
 import { PageHero } from '../shared/page-hero';
 import { SITE } from '../shared/site';
 
@@ -22,44 +21,44 @@ interface NewsItem { tone: 'info' | 'alert'; text: string; links?: { label: stri
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-citizen-login',
-  imports: [PageHero, Reveal],
+  imports: [PageHero],
   template: `
     <app-page-hero title="Citizen Login" subtitle="Sign in to apply, pay and track 100+ Government of Gujarat services — all in one place." [trail]="[{ label: 'Login' }]" />
 
     <section class="section cl" data-main tabindex="-1">
-      <span class="cl-orb cl-orb-1" aria-hidden="true"></span>
-      <span class="cl-orb cl-orb-2" aria-hidden="true"></span>
-
       <div class="container cl-grid">
-        <!-- ================= Registered user ================= -->
-        <article class="cl-card cl-main" appReveal="up" [revealDelay]="60">
+        <!-- ================= Registered user (login form) ================= -->
+        <article class="cl-card cl-main" aria-labelledby="cl-main-h">
           <header class="cl-head">
-            <span class="cl-badge"><i class="pi pi-lock" aria-hidden="true"></i></span>
+            <span class="icon-tile lg" aria-hidden="true"><i class="pi pi-lock"></i></span>
             <div>
-              <h2>Registered User</h2>
+              <h2 id="cl-main-h">Registered User</h2>
               <p>Registered users can login to access their account and 100+ services.</p>
             </div>
           </header>
 
-          <div class="cl-notice cl-notice--ok">
+          <div class="notice success">
             <i class="pi pi-info-circle" aria-hidden="true"></i>
             <p lang="gu">ડિજિટલ ગુજરાત પોર્ટલ પર તમામ વિદ્યાર્થી/સીટીઝન પોતાના મોબાઇલ નંબર થી અગાઉની જેમ લોગીન કરી શકશે જેની નોંધ લેવા વિનંતી છે.</p>
           </div>
-          <div class="cl-notice cl-notice--warn">
+          <div class="notice warn">
             <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             <p>Kindly update your password (using “Forgot Password?”) as per the new policy. It is necessary to change the password every 90 days.</p>
           </div>
 
-          <a class="cl-know" [href]="login + 'KnowYourID.aspx'" target="_blank" rel="noopener"><i class="pi pi-search" aria-hidden="true"></i> Know Your Citizen ID</a>
+          <a class="btn btn-outline btn-sm cl-know" [href]="login + 'KnowYourID.aspx'" target="_blank" rel="noopener">
+            <i class="pi pi-search" aria-hidden="true"></i> Know Your Citizen ID
+            <i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span>
+          </a>
 
           @if (stage() === 'form') {
             <form class="cl-form" (submit)="submit($event)" novalidate autocomplete="off" aria-label="Citizen login">
               <!-- login type -->
-              <div class="cl-field" [style.--i]="0">
-                <label for="cl-type">Login with</label>
+              <div class="cl-field">
+                <label for="cl-type">Login with <span class="req" aria-hidden="true">*</span></label>
                 <div class="cl-input">
                   <i class="pi pi-id-card cl-lead" aria-hidden="true"></i>
-                  <select id="cl-type" [value]="idType()" (change)="setType($any($event.target).value)">
+                  <select id="cl-type" [value]="idType()" (change)="setType($any($event.target).value)" aria-required="true">
                     <option value="">Select</option>
                     <option value="mobile">Mobile No</option>
                     <option value="citizen">CitizenId</option>
@@ -69,25 +68,25 @@ interface NewsItem { tone: 'info' | 'alert'; text: string; links?: { label: stri
               </div>
 
               <!-- user name -->
-              <div class="cl-field" [style.--i]="1" [class.is-bad]="userTouched() && !userOk()" [class.is-good]="userOk()">
-                <label for="cl-user">{{ userLabel() }}</label>
+              <div class="cl-field" [class.is-bad]="userTouched() && !userOk()" [class.is-good]="userOk()">
+                <label for="cl-user">{{ userLabel() }} <span class="req" aria-hidden="true">*</span></label>
                 <div class="cl-input">
                   <i class="pi pi-user cl-lead" aria-hidden="true"></i>
                   <input id="cl-user" type="text" [value]="username()" (input)="setUser($any($event.target).value)" (blur)="userTouched.set(true)"
                     [disabled]="!idType()" [attr.inputmode]="idType() === 'mobile' ? 'numeric' : 'text'" [attr.maxlength]="idType() === 'mobile' ? 10 : 30"
-                    [placeholder]="idType() ? userPlaceholder() : 'Select a login type first'" autocomplete="off" aria-describedby="cl-user-msg" [attr.aria-invalid]="userTouched() && !userOk()">
+                    [placeholder]="idType() ? userPlaceholder() : 'Select a login type first'" autocomplete="off" aria-required="true" aria-describedby="cl-user-msg" [attr.aria-invalid]="userTouched() && !userOk()">
                   @if (userOk()) { <i class="pi pi-check-circle cl-state" aria-hidden="true"></i> }
                 </div>
                 <small id="cl-user-msg" class="cl-msg" aria-live="polite">@if (userTouched() && !userOk()) { {{ userError() }} }</small>
               </div>
 
               <!-- password -->
-              <div class="cl-field" [style.--i]="2">
-                <label for="cl-pass">Password</label>
+              <div class="cl-field">
+                <label for="cl-pass">Password <span class="req" aria-hidden="true">*</span></label>
                 <div class="cl-input">
                   <i class="pi pi-key cl-lead" aria-hidden="true"></i>
                   <input id="cl-pass" [type]="showPw() ? 'text' : 'password'" [value]="password()" (input)="password.set($any($event.target).value)" maxlength="20"
-                    placeholder="Your password" autocomplete="off" aria-describedby="cl-policy">
+                    placeholder="Your password" autocomplete="off" aria-required="true" aria-describedby="cl-policy">
                   <button type="button" class="cl-eye" (click)="showPw.set(!showPw())" [attr.aria-label]="showPw() ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPw()">
                     <i class="pi" [class.pi-eye]="!showPw()" [class.pi-eye-slash]="showPw()" aria-hidden="true"></i>
                   </button>
@@ -112,17 +111,17 @@ interface NewsItem { tone: 'info' | 'alert'; text: string; links?: { label: stri
               </div>
 
               <!-- captcha -->
-              <div class="cl-field cl-captcha" [style.--i]="3" [class.is-bad]="captchaTouched() && !captchaOk()" [class.is-good]="captchaOk()">
-                <label for="cl-captcha">Enter captcha</label>
+              <div class="cl-field cl-captcha" [class.is-bad]="captchaTouched() && !captchaOk()" [class.is-good]="captchaOk()">
+                <label for="cl-captcha">Enter captcha <span class="req" aria-hidden="true">*</span></label>
                 <div class="cl-captcha-row">
                   <div class="cl-input">
                     <i class="pi pi-shield cl-lead" aria-hidden="true"></i>
                     <input id="cl-captcha" type="text" [value]="captchaInput()" (input)="captchaInput.set($any($event.target).value)" (blur)="captchaTouched.set(true)" maxlength="5"
-                      placeholder="Enter captcha*" autocomplete="off" autocapitalize="characters" spellcheck="false">
+                      placeholder="Enter captcha*" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-required="true">
                     @if (captchaOk()) { <i class="pi pi-check-circle cl-state" aria-hidden="true"></i> }
                   </div>
                   <canvas #cap class="cl-cap-img" width="150" height="48" role="img" aria-label="Captcha image. Use the refresh button for a new one."></canvas>
-                  <button type="button" class="cl-refresh" [class.spin]="spinning()" (click)="refreshCaptcha()" aria-label="Refresh captcha"><i class="pi pi-refresh" aria-hidden="true"></i></button>
+                  <button type="button" class="sl-btn cl-refresh" [class.spin]="spinning()" (click)="refreshCaptcha()" aria-label="Refresh captcha"><i class="pi pi-refresh" aria-hidden="true"></i></button>
                 </div>
               </div>
 
@@ -131,70 +130,83 @@ interface NewsItem { tone: 'info' | 'alert'; text: string; links?: { label: stri
                 <li lang="gu"><i class="pi pi-arrow-right" aria-hidden="true"></i> પાસવર્ડ પોલીસી પ્રમાણે હશે તો જ લોગિન બટન સક્રિય થશે.</li>
               </ul>
 
-              <button type="submit" class="cl-submit" [disabled]="!canLogin()" [attr.aria-describedby]="'cl-todo'">
+              <button type="submit" class="btn btn-primary btn-lg btn-block cl-submit" [disabled]="!canLogin()" [attr.aria-describedby]="'cl-todo'">
                 <span>Login</span><i class="pi pi-arrow-right" aria-hidden="true"></i>
               </button>
               <p id="cl-todo" class="cl-todo" aria-live="polite">@if (!canLogin()) { Still needed: {{ todo() }}. }</p>
 
-              <p class="cl-forgot">Forgot Password? <a [href]="login + 'CitizenForgotPassword.aspx'" target="_blank" rel="noopener">Click here</a></p>
+              <p class="cl-forgot">Forgot Password?
+                <a [href]="login + 'CitizenForgotPassword.aspx'" target="_blank" rel="noopener">Click here<i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
+              </p>
             </form>
           } @else {
             <div class="cl-handoff" role="status">
               <svg class="cl-tick" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24" /><path d="M15 27l8 8 14-16" /></svg>
               <h3>Details look good</h3>
               <p>For your security, the final sign-in is completed on the official Digital Gujarat portal, which verifies your password and captcha on its own server. Nothing you typed here has been stored or sent.</p>
-              <div class="cl-handoff-actions">
-                <a class="cl-submit" [href]="login + 'CitizenLogin.aspx'" target="_blank" rel="noopener noreferrer"><span>Continue to secure sign-in</span><i class="pi pi-external-link" aria-hidden="true"></i></a>
-                <button type="button" class="cl-ghost" (click)="editDetails()">Edit details</button>
+              <div class="btn-row center">
+                <a class="btn btn-primary btn-lg" [href]="login + 'CitizenLogin.aspx'" target="_blank" rel="noopener noreferrer">
+                  <span>Continue to secure sign-in</span><i class="pi pi-external-link" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span>
+                </a>
+                <button type="button" class="btn btn-outline btn-lg" (click)="editDetails()">Edit details</button>
               </div>
             </div>
           }
         </article>
 
         <!-- ================= New user ================= -->
-        <aside class="cl-card cl-new" appReveal="up" [revealDelay]="140" aria-labelledby="cl-new-h">
-          <header class="cl-head">
-            <span class="cl-badge cl-badge--accent"><i class="pi pi-user-plus" aria-hidden="true"></i></span>
-            <div>
-              <h2 id="cl-new-h">New User</h2>
-              <p>Register with the Government of Gujarat online portal and get access to 100+ services.</p>
-            </div>
-          </header>
-          <a class="cl-register" [href]="login + 'CitizenRegistration.aspx'" target="_blank" rel="noopener"><i class="pi pi-user-plus" aria-hidden="true"></i> New Registration (Citizen)</a>
-          <ul class="cl-perks">
-            @for (p of perks; track p.text; let i = $index) { <li [style.--i]="i"><span><i [class]="p.icon" aria-hidden="true"></i></span>{{ p.text }}</li> }
-          </ul>
+        <aside class="cl-side" aria-labelledby="cl-new-h">
+          <div class="cl-card cl-new">
+            <header class="cl-head">
+              <span class="icon-tile lg accent" aria-hidden="true"><i class="pi pi-user-plus"></i></span>
+              <div>
+                <h2 id="cl-new-h">New User</h2>
+                <p>Register with the Government of Gujarat online portal and get access to 100+ services.</p>
+              </div>
+            </header>
+            <a class="btn btn-accent btn-block" [href]="login + 'CitizenRegistration.aspx'" target="_blank" rel="noopener">
+              <i class="pi pi-user-plus" aria-hidden="true"></i> New Registration (Citizen)
+              <i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span>
+            </a>
+            <ul class="cl-perks">
+              @for (p of perks; track p.text) { <li><span class="icon-tile" aria-hidden="true"><i [class]="p.icon"></i></span>{{ p.text }}</li> }
+            </ul>
+          </div>
+
           <div class="cl-help">
-            <span class="cl-help-ico"><i class="pi pi-phone" aria-hidden="true"></i></span>
+            <span class="icon-tile green" aria-hidden="true"><i class="pi pi-phone"></i></span>
             <p>Contact our common Service Portal Help-Line <a href="tel:18002335500">1800 233 5500</a> for further information.</p>
           </div>
-          <div class="cl-manuals">
-            <a [href]="login + 'Download/User_Manual_on_CSP_v1.1.pdf'" target="_blank" rel="noopener"><i class="pi pi-download" aria-hidden="true"></i> User Manual in English</a>
-            <a [href]="login + 'Download/GUser_Manual_on_CSP_v1.1.pdf'" target="_blank" rel="noopener"><i class="pi pi-download" aria-hidden="true"></i> User Manual in Gujarati</a>
-          </div>
-        </aside>
 
-        <!-- ================= Latest update ================= -->
-        <aside class="cl-card cl-news" appReveal="up" [revealDelay]="220" aria-labelledby="cl-news-h">
-          <header class="cl-head">
-            <span class="cl-badge cl-badge--soft"><i class="pi pi-megaphone" aria-hidden="true"></i></span>
-            <div><h2 id="cl-news-h">Latest Update</h2><p>Scrolls automatically — hover or focus to pause.</p></div>
-          </header>
-          <div class="cl-ticker" tabindex="0" aria-label="Latest updates">
-            <div class="cl-ticker-move">
-              @for (copy of [0, 1]; track copy) {
-                @for (n of news; track $index) {
-                  <p class="cl-news-item" [class.alert]="n.tone === 'alert'" [attr.aria-hidden]="copy === 1 ? true : null">
-                    <i class="pi pi-arrow-circle-right" aria-hidden="true"></i>
-                    <span>{{ n.text }}
-                      @for (l of n.links ?? []; track l.url) { <a [href]="l.url" target="_blank" rel="noopener" [attr.tabindex]="copy === 1 ? -1 : null">{{ l.label }}</a> }
-                    </span>
-                  </p>
-                }
-              }
-            </div>
+          <div class="cl-manuals">
+            <a [href]="login + 'Download/User_Manual_on_CSP_v1.1.pdf'" target="_blank" rel="noopener"><i class="pi pi-download" aria-hidden="true"></i> User Manual in English <small>(PDF)</small><i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
+            <a [href]="login + 'Download/GUser_Manual_on_CSP_v1.1.pdf'" target="_blank" rel="noopener"><i class="pi pi-download" aria-hidden="true"></i> User Manual in Gujarati <small>(PDF)</small><i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <!-- ================= Latest update ================= -->
+    <section class="section alt" aria-labelledby="cl-news-h">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow"><i class="pi pi-megaphone" aria-hidden="true"></i> Notices</p>
+          <h2 id="cl-news-h">Latest Update</h2>
+        </div>
+        <ul class="cl-news">
+          @for (n of news; track $index) {
+            <li class="cl-news-item" [class.alert]="n.tone === 'alert'">
+              <i class="pi" [class.pi-exclamation-circle]="n.tone === 'alert'" [class.pi-info-circle]="n.tone !== 'alert'" aria-hidden="true"></i>
+              <p>
+                @if (n.tone === 'alert') { <span class="badge new">Important</span> }
+                {{ n.text }}
+                @for (l of n.links ?? []; track l.url) {
+                  <a [href]="l.url" target="_blank" rel="noopener">{{ l.label }}<i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></a>
+                }
+              </p>
+            </li>
+          }
+        </ul>
       </div>
     </section>
   `,
@@ -342,7 +354,7 @@ export class CitizenLoginPage {
       ctx.save();
       ctx.translate(18 + i * 26, h / 2 + r(-3, 3));
       ctx.rotate(r(-0.35, 0.35));
-      ctx.font = `700 ${Math.round(r(26, 31))}px Sora, Inter, sans-serif`;
+      ctx.font = `700 ${Math.round(r(26, 31))}px 'Noto Sans', Arial, sans-serif`;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = colors[i % colors.length];
       ctx.fillText(ch, 0, 0);

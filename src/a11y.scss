@@ -57,18 +57,50 @@ html.lite {
 /* ---- High contrast: black / white / yellow, strong borders ---- */
 html.a11y-contrast {
   --dg-bg: #000; --dg-alt: #0b0b0b; --dg-card: #000; --dg-text: #fff; --dg-muted: #f0f0f0; --dg-border: #fff; --ink: #000; --dg-shadow: none;
-  --brand: #ffd400 !important; --brand-rgb: 255, 212, 0 !important; --brand-2: #ffe45c !important; --brand-3: #fff1a8 !important;
+  --brand: #ffd400 !important; --brand-rgb: 255, 212, 0 !important; --btn-ink: #000 !important; --brand-3: #1a1a00 !important; --brand-4: #fff !important; --dg-alt-2: #111 !important; --dg-border-strong: #fff !important; --accent-ink: #ffd400 !important; --dg-info-soft: #000 !important; --brand-2: #ffe45c !important; --brand-3: #fff1a8 !important;
   body { background: #000; color: #fff; }
   :is(h1, h2, h3, h4, h5, h6, dt, dd, strong, b, label, legend, th, td, small, p, li, span:not(.pi)):not(.ax-drawer *) { color: #fff; }
   .accent, .grad { color: #ffd400 !important; -webkit-text-fill-color: #ffd400 !important; background: none !important; }
   :is(a:not([class]), .p-accordion-content a):not(.ax-drawer *) { color: #ffd400; text-decoration: underline; }
   .hero, .stats, .promo, .cta-band, .site-footer, .topbar, .site-header, .section.alt, .quick-card, .holiday { background: #000 !important; background-image: none !important; }
   .stats, .promo, .cta-band, .site-footer, .topbar, .site-header, .quick-card { border: 2px solid #fff; }
-  .service-card, .svc-card, .trend-card, .video-card, .manual, .promo-card, .exp-card, .glass, .p-card, .p-accordion-panel, .news li, .p-tabpanels, .p-select, .p-inputtext,
+  .card, .svc-card, .vd-card, .cp-card, .cl-card, .hd-channel, .lu-item, .ex-card, .step, .finder-card, .exp-card, .glass, .p-card, .p-accordion-panel, .news li, .p-tabpanels, .p-select, .p-inputtext,
   .partners-marquee a, .pal-chips button, .trend-chips button, input, textarea, select { background: #000 !important; border: 2px solid #fff !important; box-shadow: none !important; color: #fff; }
   .p-button:not(.p-button-outlined):not(.p-button-text), a[pButton]:not(.on-dark), .exp-nav:hover, .tp-btn:hover { background: #ffd400 !important; border-color: #ffd400 !important; color: #000 !important; * { color: #000 !important; } }
   .p-button.p-button-outlined, .on-dark { background: transparent !important; border: 2px solid #fff !important; color: #fff !important; }
   .exp-title, .exp-content * { color: #fff !important; }
   .scroll-progress { background: #ffd400 !important; }
   ::selection { background: #ffd400; color: #000; }
+}
+
+/* ---- high contrast: GIGW chrome + home ---- */
+html.a11y-contrast {
+  .primary-nav, .brand-bar, .gov-bar, .page-hero, .page-meta, .ticker, .ticker-label, .stats, .promo, .footer-policies, .footer-bottom { background: #000 !important; background-image: none !important; }
+  .primary-nav { border-block: 2px solid #fff; }
+  .nav-link, .nav-link * { color: #fff !important; }
+  .nav-link.active, .nav-link:hover { color: #000 !important; background: #ffd400 !important; * { color: #000 !important; } }
+  .sub-menu { background: #000 !important; border: 2px solid #fff !important; a { color: #fff !important; } a:hover { color: #000 !important; background: #ffd400 !important; } }
+  .hero::before { display: none; }
+  .sl-btn, .ticker-btn, .hdr-icon { background: #000 !important; border: 2px solid #fff !important; color: #fff !important; }
+  .sl-btn:hover { background: #ffd400 !important; color: #000 !important; }
+  .sl-dots button { background: #fff !important; } .sl-dots button[aria-current='true'] { background: #ffd400 !important; }
+  .hdr-search, .finder-input { background: #000 !important; border: 2px solid #fff !important; color: #fff !important; }
+  .icon-tile, .badge, .chip { background: #000 !important; border: 1px solid #fff; color: #ffd400 !important; }
+}
+
+/* ---- high contrast: text on light / yellow fills must be black (the generic rule above turns spans white) ---- */
+html.a11y-contrast {
+  .gt-contrast .ct-std, .gt-contrast .ct-std * { background: #fff !important; color: #000 !important; }
+  .gt-contrast .ct-dark, .gt-contrast .ct-dark * { color: #fff !important; }
+  .gt-contrast .ct-high, .gt-contrast .ct-high * { color: #ffd400 !important; }
+  .btn:not(.btn-outline):not(.btn-ghost):not(.btn-on-dark):not(.btn-light), .btn:not(.btn-outline):not(.btn-ghost):not(.btn-on-dark):not(.btn-light) * { color: #000 !important; }
+  .btn:not(.btn-outline):not(.btn-ghost):not(.btn-on-dark):not(.btn-light):hover { background: #fff !important; border-color: #fff !important; }
+  .btn-outline, .btn-ghost, .btn-on-dark, .btn-light { background: #000 !important; border: 2px solid #ffd400 !important; color: #ffd400 !important; * { color: #ffd400 !important; } &:hover { background: #ffd400 !important; color: #000 !important; * { color: #000 !important; } } }
+  .finder-go, .finder-go *, .p-tab .count, .date-chip small, .theme-pop .tsw, .theme-pop .tsw * { color: #000 !important; }
+  .p-tab-active .count, .date-chip small { background: #ffd400 !important; }
+  .hh-ic, .stat-ic, .circ-ic, .cat-ic, .ex-ic, .pop-ic { background: #000 !important; border: 1.5px solid #fff; color: #ffd400 !important; i { color: #ffd400 !important; } }
+  .cat-ic img, .ex-ic img, .pop-ic img { background: #fff; border-radius: 6px; padding: 2px; }
+  .ticker-label:hover, .ticker-label:hover *, .sl-btn:hover *, .ticker-btn:hover, .ticker-btn:hover * { color: #000 !important; background: #ffd400 !important; }
+  .gt-link:hover, .gt-a11y:hover, .gt-theme-btn:hover { background: #ffd400 !important; color: #000 !important; * { color: #000 !important; } }
+  .theme-pop { background: #000 !important; border: 2px solid #fff !important; button { color: #fff !important; &:hover, &.on { background: #222 !important; } } }
 }

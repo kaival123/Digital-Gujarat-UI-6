@@ -182,9 +182,9 @@ html.a11y-contrast {
 /* ---- right-edge buttons share one vertical axis: accessibility button + scroll-to-top ---- */
 :root { --fab-axis: 46px; }
 .ax-fab { right: calc(var(--fab-axis) - 32px); }
-p-scrolltop button.p-button.p-scrolltop { width: 40px; height: 40px; inset-inline-end: calc(var(--fab-axis) - 20px); }
+.to-top { right: calc(var(--fab-axis) - 22px) !important; bottom: 20px !important; }
 @media (max-width: 640px), (pointer: coarse) {
   :root { --fab-axis: 40px; }
   .ax-fab { right: calc(var(--fab-axis) - 26px); }
-  p-scrolltop button.p-button.p-scrolltop { width: 38px; height: 38px; inset-inline-end: calc(var(--fab-axis) - 19px); }
+  .to-top { width: 40px; height: 40px; right: calc(var(--fab-axis) - 20px) !important; bottom: 18px !important; }
 }

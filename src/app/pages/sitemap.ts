@@ -1,7 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Card } from 'primeng/card';
-import { Reveal } from '../shared/motion';
 import { PageHero } from '../shared/page-hero';
 import { abs, routeFor } from '../shared/site';
 import sitemap from '../data/sitemap.json';
@@ -9,23 +7,29 @@ import sitemap from '../data/sitemap.json';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-sitemap',
-  imports: [RouterLink, Card, PageHero, Reveal],
+  imports: [RouterLink, PageHero],
   template: `
-    <app-page-hero title="Site Map" />
-    <section class="section" data-main tabindex="-1">
-      <div class="container sitemap-grid">
-        @for (g of groups; track g.title; let i = $index) {
-          <p-card [header]="g.title" [appReveal]="'up'" [revealDelay]="(i % 3) * 90">
-            <ul class="link-list">
-              @for (l of g.links; track $index) {
-                <li>
-                  @if (l.route) { <a [routerLink]="l.route">{{ l.label }}</a> }
-                  @else { <a [href]="l.url" target="_blank" rel="noopener">{{ l.label }}</a> }
-                </li>
-              }
-            </ul>
-          </p-card>
-        }
+    <app-page-hero title="Site Map" subtitle="Every page and service on Digital Gujarat, grouped by topic." />
+    <section class="section sm-page" data-main tabindex="-1">
+      <div class="container">
+        <div class="sm-cols">
+          @for (g of groups; track g.title; let i = $index) {
+            <section class="sm-group" [attr.aria-labelledby]="'sm-h-' + i">
+              <h2 class="sm-title" [id]="'sm-h-' + i">{{ g.title }} <span class="sm-n">{{ g.links.length }}</span></h2>
+              <ul class="sm-links" role="list">
+                @for (l of g.links; track $index) {
+                  <li>
+                    @if (l.route) {
+                      <a [routerLink]="l.route"><i class="pi pi-angle-right" aria-hidden="true"></i><span>{{ l.label }}</span></a>
+                    } @else {
+                      <a [href]="l.url" target="_blank" rel="noopener"><i class="pi pi-angle-right" aria-hidden="true"></i><span>{{ l.label }}<i class="pi pi-external-link ext" aria-hidden="true"></i><span class="sr-only"> (opens in a new tab)</span></span></a>
+                    }
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
       </div>
     </section>
   `,
