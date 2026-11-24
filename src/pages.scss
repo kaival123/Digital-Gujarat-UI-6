@@ -301,7 +301,7 @@
     li > span:last-child { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-sm); } }
 }
 @media (max-width: 1023px) {
-  .scr-page .scr-layout { grid-template-columns: 1fr; gap: var(--sp-6); }
+  .scr-page .scr-layout { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
   .scr-page .scr-side { position: static; }
 }
 

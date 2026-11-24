@@ -1,0 +1,72 @@
+/* ===== Cross-device safety net (loaded last) =====
+   Breakpoints used across the site: ≤380 small phones · ≤639 phones · 640–1099 tablets · ≥1100 laptops · ≥1536 wide screens. */
+
+/* never let long words, URLs or GR numbers push a layout wider than the screen */
+body { overflow-wrap: break-word; }
+h1, h2, h3, h4, p, li, td, th, small, a { overflow-wrap: break-word; }
+iframe, video, canvas, table { max-width: 100%; }
+/* grid / flex children may shrink below their content width */
+.finder-card > *, .cl-head > *, .news-panel, .card, .ex-card, .cat-card, .help-card > div, .stat, .step { min-width: 0; }
+.finder-card { grid-template-columns: auto minmax(0, 1fr); }
+
+/* ---- tablets (portrait + landscape) ---- */
+@media (min-width: 640px) and (max-width: 1099px) {
+  .hero-inner { padding-block: var(--sp-6) var(--sp-8); }
+  .footer-grid { gap: var(--sp-5); }
+  .gl-split .holiday { max-width: none; }
+}
+
+/* ---- phones ---- */
+@media (max-width: 899px) { .finder-card { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 639px) {
+  .section-head-row { align-items: flex-start; }
+  .section-head p { font-size: var(--fs-base); }
+  .btn-row .btn { flex: 1 1 auto; }
+  .finder-card { padding: var(--sp-4); }
+  .stats-grid { gap: var(--sp-4); }
+  .page-hero .container { padding-block: var(--sp-5) var(--sp-6); }
+  .page-hero p { font-size: var(--fs-base); }
+}
+
+/* ---- small phones (≤420): the gov bar keeps only the controls; identity stays in the branding row ---- */
+@media (max-width: 420px) {
+  .gov-name { display: none; }
+  .gov-bar-inner { justify-content: flex-end; }
+  .gt-group.gt-contrast { gap: 6px; padding: 0 6px; }
+  .gt-lang select { padding-right: 18px; background-position: right 5px center; }
+  .brand { gap: 8px; .emblem { height: 38px; } .logo { height: 32px; } }
+  .brand-actions { gap: 8px; }
+  .hdr-icon { width: 40px; height: 40px; }
+  .finder-chips .chip { font-size: var(--fs-xs); }
+}
+
+/* ---- wide screens ---- */
+@media (min-width: 1536px) {
+  .hero-inner { padding-block: var(--sp-8) calc(var(--sp-8) + var(--sp-5)); }
+}
+
+/* page-level guard: nothing may widen the layout viewport on phones (clip keeps the sticky nav working) */
+html, body { overflow-x: clip; }
+
+/* holiday calendar: fluid instead of PrimeNG's fixed min-width */
+.holiday { min-width: 0; overflow: hidden;
+  .p-datepicker, .p-datepicker-panel, p-motion { width: 100% !important; min-width: 0 !important; max-width: 100%; }
+  .p-datepicker-calendar { width: 100%; table-layout: fixed; }
+  .p-datepicker-day { width: 100% !important; max-width: 40px; aspect-ratio: 1; height: auto !important; margin-inline: auto; } }
+@media (max-width: 420px) { .holiday { padding: var(--sp-4); .p-datepicker-calendar td { padding: 1px !important; } .p-datepicker-day { font-size: var(--fs-sm); } } }
+
+/* Citizen login heading: icon + text wrap inside the card */
+.cl-head { flex-wrap: wrap; > div { flex: 1 1 180px; } }
+
+/* absolutely-positioned children (e.g. .sr-only labels) must stay inside horizontal scrollers,
+   otherwise they escape the clip and widen the mobile layout viewport */
+.pop-track, .pop-card, .ticker-track, .logo-marquee, .scr-table-wrap, .p-tablist-content, .p-datatable-table-container, [class*='table-wrap'] { position: relative; }
+.sr-only, .sr-only-lg { top: 0; left: 0; }
+.cl-card > *, .cl-head { min-width: 0; }
+
+/* ---- tablets / small laptops: compact gov bar (icon-only Theme + Accessibility; labels stay for screen readers) ---- */
+@media (max-width: 1199px) {
+  .gt-a11y > .hide-sm, .gt-theme-btn > .hide-sm { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .gt-link { padding: 6px 8px; }
+  .gov-bar { font-size: 0.78rem; }
+}
